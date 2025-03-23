@@ -1,0 +1,45 @@
+import tensorflow as tf
+import pandas as pd
+import numpy as np
+
+
+#데이터 준비?p162 p172 p148
+x1 = np.array([0,0,58.52])
+x2 = np.array([0,1,55.46])
+x3 = np.array([1,0,67.52])
+x4 = np.array([1,1,62.88])
+x5 = np.array([2,0,45.23])
+x6 = np.array([2,1,55.89])
+anti = np.array([x1, x2, x3, x4, x5, x6])
+
+
+독립 = anti[['항생제', '플라스틱종류']] #항생제공집합=0, 페니실린=1, 카나마이신=2,,, 생분해 플라=0, 일반=1
+종속 = anti[['항생제내성비율']]
+
+#print(독립.shape, 종속.shape)
+
+
+#x1 = np.array([58.52, 67.52, 45.23])
+#x2 = np.array([55.46, 62.88, 55.89])
+
+
+#원핫인코딩?
+#anti = pd.get_dummies(anti)
+
+#모델의 구조
+X = tf.keras.layers.Input(shape=[2])
+H = tf.keras.layers.Dense(8, activation="swish")(X)
+H = tf.keras.layers.Dense(8, activation="swish")(H)
+H = tf.keras.layers.Dense(8, activation="swish")(H)
+H = tf.keras.layers.Dense(8, activation="swish")(H)
+Y = tf.keras.layers.Dense(1, activation='softmax')(H)
+model = tf.keras.models.Model(X,Y)
+model.compile(loss='catergoral_crossentropy',
+              metrics='accuracy')
+
+model.summary()
+
+model.fit(독립, 종속, epochs=100)
+
+print(model.predict(독립[:5]))
+prin(종속[:5])
